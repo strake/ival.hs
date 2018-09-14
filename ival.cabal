@@ -42,7 +42,8 @@ test-suite test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Main.hs
-  build-depends:       base >=4.11 && <5
+  build-depends:       alg >=0.2.6 && <0.3
+                     , base >=4.11 && <5
                      , smallcheck >=1.1.4
                      , tasty >=1.0
                      , tasty-smallcheck >=0.8
