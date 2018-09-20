@@ -7,7 +7,7 @@ import Data.Function (on)
 import Data.Ord (Down (..))
 import Relation.Binary.Comparison
 
-infix 5 :–:
+infix 9 :–:
 data Interval a = Maybe a :–: Maybe a
     deriving (Read, Show,
               Functor, Foldable, Traversable)
@@ -18,7 +18,8 @@ instance PartialEq a => PartialEq (Interval a) where a₁ :–: b₁ ≡ a₂ :�
 instance (PartialOrd a, PartialEq a) => PartialOrd (Interval a)
 instance Eq a => Eq (Interval a)
 
-infixr 4 ∪, ∩
+infixr 7 ∩
+infixr 5 ∪
 (∪), (∩) :: Ord a => Interval a -> Interval a -> Interval a
 a₁ :–: b₁ ∪ a₂ :–: b₂ = liftA2 min a₁ a₂ :–: liftA2 max b₁ b₂
 a₁ :–: b₁ ∩ a₂ :–: b₂ = fmap unMax (fmap Max a₁ <> fmap Max a₂) :–:
