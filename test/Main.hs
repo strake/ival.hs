@@ -6,11 +6,13 @@
 module Main where
 
 import Prelude hiding (Num (..), Ord (..))
+import qualified Prelude
 import Algebra
 import Control.Applicative
 import Data.Interval
+import Data.Maybe (isJust)
 import Data.Ratio
-import Data.Semigroup (Product)
+import Data.Semigroup (Product, Sum)
 import Relation.Binary.Comparison as A
 import Test.SmallCheck
 import Test.SmallCheck.Series
@@ -23,7 +25,9 @@ main = defaultMain $
     [testProperty "≤-reflexive" $ \ (a :: Interval Rational) -> a ≤ a,
      testProperty "≤-antisymmetric" $ \ (a :: Interval Rational) b -> (a ≤ b && b ≤ a) ≡ (a ≡ b),
      testProperty "≤-transitive" $ \ (a :: Interval Rational) b c -> not (a ≤ b && b ≤ c) || a ≤ c,
-     testProperty "≤-∩" $ \ (a :: Interval Rational) b -> (a ≤ b) ≡ (a ∩ b ≡ a)]
+     testProperty "≤-overlap" $ \ (a :: Interval Rational) b -> (a ≤ b) ≡ (overlap a b ≡ Just a),
+     testProperty "overlap-commutative" $ \ (a :: Interval Rational) b -> overlap a b ≡ overlap b a,
+     testProperty "hull-commutative" $ \ (a :: Interval Rational) b -> overlap a b ≡ overlap b a]
 
 instance (Serial m a, PartialOrd a) => Serial m (Interval a) where
     series = decDepth [a :–: b | a <- series, b <- series, a ≤ b]
@@ -41,3 +45,6 @@ instance (PartialOrd a, Semigroup (Product a)) => PartialOrd (Ratio a) where
 instance (Ord a, Semigroup (Product a)) => Ord (Ratio a) where
     compare (liftA2 (,) numerator denominator -> (an, ad)) (liftA2 (,) numerator denominator -> (bn, bd)) =
         compare (an * bd) (bn * ad)
+
+instance Group (Sum (Ratio Integer)) where
+    invert = Prelude.negate
